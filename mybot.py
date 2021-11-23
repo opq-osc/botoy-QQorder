@@ -12,7 +12,7 @@ action = Action(qq=qq)
 
 @bot.on_group_msg
 @decorators.ignore_botself
-def zhi_ling(ctx: GroupMsg):
+def order_diary(ctx: GroupMsg):
     if ctx.Content in dialog():
         result = dialog()[ctx.Content]
         action.sendGroupText(ctx.FromGroupId, result)
@@ -38,6 +38,27 @@ def zhi_ling(ctx: GroupMsg):
         else:
             result = '指令删除失败，格式错误或者无该指令'
             action.sendGroupText(ctx.FromGroupId, result)
+            # 写日记
+    elif ctx.Content == "创建日记本":
+        result = chuangjian(ctx.FromUserId)
+        action.sendGroupText(ctx.FromGroupId, result)
+    elif ctx.Content[0:3] == "写日记" and len(ctx.Content) > 3:
+        try:
+            after = ctx.Content.split(' ', 2)
+            result = xieriji(title=after[1], content=after[2], qq_num=ctx.FromUserId)
+            action.sendGroupText(ctx.FromGroupId, result)
+        except BaseException:
+            action.sendGroupText(ctx.FromGroupId, "日记写入失败，请检查格式")
+    elif ctx.Content[0:4] == "删除日记" and len(ctx.Content) > 4:
+        try:
+            after = ctx.Content.split(' ', 1)
+            result = shanchu(title=after[1], qq_num=ctx.FromUserId)
+            action.sendGroupText(ctx.FromGroupId, result)
+        except BaseException:
+            action.sendGroupText(ctx.FromGroupId, "日记删除失败，请检查格式或者日记标题")
+    elif ctx.Content == "查看日记" :
+        result = chakan(ctx.FromUserId)
+        action.sendGroupText(ctx.FromGroupId, result)
 
 
 if __name__ == '__main__':
